@@ -11,8 +11,7 @@ You can clone this repo as starter project for your Express, MongoDB API server
 ## Data Model 🔍
     Data model based on a relational model and adapted to mongoDb.
         ![Relational Data Model](/assets/image.png)
-
-
+        ![Mongo](/assets/immageMongo.png)
 ## Tech Stack 💻
 
 
@@ -31,8 +30,7 @@ You can clone this repo as starter project for your Express, MongoDB API server
 
 
 ```bash
- git clone https://github.com/CristiansArevalom/ApiRestMedicalCareTypescript.git
- cd citas_medicas_bknd
+ git clone https://github.com/CristiansArevalom/backend_medical_care.git
 ```
 
 
