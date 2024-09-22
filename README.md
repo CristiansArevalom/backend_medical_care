@@ -11,7 +11,7 @@ You can clone this repo as starter project for your Express, MongoDB API server
 ## Data Model 🔍
     Data model based on a relational model and adapted to mongoDb.
         ![Relational Data Model](/assets/image.png)
-        ![Mongo](/assets/immageMongo.png)
+        ![Mongo](/assets/immageMongo.PNG)
 ## Tech Stack 💻
 
 
