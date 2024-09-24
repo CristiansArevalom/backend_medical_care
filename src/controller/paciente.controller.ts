@@ -23,7 +23,7 @@ export const getPacienteById = async (req: Request, res: Response) => {
 export const createPaciente = async (req: Request, res: Response) => {
     try {
         const paciente = await pacienteService.createPaciente(req.body);
-        res.json(paciente)
+       return res.status(201).json(paciente)
     } catch (error) {
         res.status(400).json({ message: 'Error al crear el paciente' + error });
     }
