@@ -138,7 +138,7 @@ export const deleteConsultorio = async (id: String) => {
     throw new Error("Error al eliminar el consultorio " + error);
   }
 };
-
+/*
 export const getConsultoriosDisponibles = async (
   fechaInicioStr: string,
   FechaFinStr: string
@@ -235,6 +235,67 @@ export const getConsultoriosDisponibles = async (
     return consultoriosDisponiblesResponse;
   } catch (error) {
     throw new Error("error al buscar consultorios disponibles" + error);
+  }
+};*/
+
+export const getConsultoriosDisponibles = async (
+  fechaInicioStr: string,
+  fechaFinStr: string
+): Promise<ConsultorioResponseDto[]> => {
+  try {
+    const consultoriosDisponibles = new Set<string>();
+    const consultoriosDisponiblesResponse: ConsultorioResponseDto[] = [];
+    const fechaSolicitudReservaInicio = await convertirAFechaHora(fechaInicioStr);
+    const fechaSolicitudReservaFin = await convertirAFechaHora(fechaFinStr);
+    const fechaActual = new Date();
+
+    if (fechaSolicitudReservaInicio < fechaActual || fechaSolicitudReservaInicio > fechaSolicitudReservaFin) {
+      throw new Error("La fecha de inicio a reservar no puede ser inferior a la fecha de hoy o mayor a la fecha de fin.");
+    }
+
+    const consultoriosDb = await Consultorio.find();
+    const consultoriosAsigDb = await consultorioAsignadoServices.getConsultoriosAsignados();
+
+    for (const consultorioDb of consultoriosDb) {
+      const consultorioAsignadosByID = await consultorioAsignadoServices.getConsultorioAsignadoByConsultorio(consultorioDb._id);
+
+      let disponible = true;
+
+      if (consultorioAsignadosByID) {
+        for (const consultAsign of consultorioAsignadosByID) {
+          const fechaInicioReserva = await convertirAFechaHora(consultAsign.inicioReserva);
+          const fechaFinReserva = await convertirAFechaHora(consultAsign.finReserva);
+
+          // Verifica si el rango solicitado NO se solapa con la reserva existente
+          if (
+            (fechaSolicitudReservaInicio <= fechaFinReserva && fechaSolicitudReservaFin >= fechaInicioReserva)
+          ) {
+            disponible = false;
+            break; // Si se solapa, ya no está disponible, no hace falta seguir comprobando
+          }
+        }
+      }
+
+      if (disponible) {
+        const consultorioResponseDto = new ConsultorioResponseDto(
+          consultorioDb.id,
+          consultorioDb.ciudad,
+          consultorioDb.direccion,
+          consultorioDb.numero,
+          consultorioDb.descripcion
+        );
+        const consultorioResponseDtoStr = JSON.stringify(consultorioResponseDto);
+        
+        if (!consultoriosDisponibles.has(consultorioResponseDtoStr)) {
+          consultoriosDisponibles.add(consultorioResponseDtoStr);
+          consultoriosDisponiblesResponse.push(consultorioResponseDto);
+        }
+      }
+    }
+
+    return consultoriosDisponiblesResponse;
+  } catch (error) {
+    throw new Error("Error al buscar consultorios disponibles: " + error);
   }
 };
 

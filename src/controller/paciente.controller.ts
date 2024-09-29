@@ -42,7 +42,7 @@ export const deletePaciente = async (req: Request, res: Response) => {
         res.json({ message: 'Paciente eliminado correctamente' })
 
     } catch (error) {
-        res.status(400).json({ message: 'Error al crear el paciente' + error });
+        res.status(400).json({ message: 'Error al eliminar el paciente' + error });
     }
 };
 export const getPacientesByCedula = async (req: Request, res: Response) => {

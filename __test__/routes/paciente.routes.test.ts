@@ -54,16 +54,13 @@ describe('Paciente Routes', () => {
                 fechaNacimiento: '1990-01-01',
                 telefono: '98765432',
             };
-
             const mockResponse = {
                 id: '1',
                 ...newPaciente
             };
-
             (pacienteService.createPaciente as jest.Mock).mockResolvedValue(mockResponse);
-
             const response = await request(app).post('/api/pacientes').send(newPaciente);
-            
+        
             expect(response.status).toBe(201); // Código de estado 201 para creación exitosa
             expect(response.body).toEqual(mockResponse);
         });
@@ -76,11 +73,8 @@ describe('Paciente Routes', () => {
                 fechaNacimiento: '1990-01-01',
                 telefono: '98765432',
             };
-
             (pacienteService.createPaciente as jest.Mock).mockRejectedValue(new Error('Paciente ya registrado'));
-
             const response = await request(app).post('/api/pacientes').send(newPaciente);
-            
             expect(response.status).toBe(400); // Código de estado 400 para solicitud incorrecta
             expect(response.body).toEqual({ message: 'Error al crear el pacienteError: Paciente ya registrado' });
         });
@@ -105,6 +99,24 @@ describe('Paciente Routes', () => {
         });
     });
 
-    
+    describe('DELETE /api/pacientes/:id', () => {
+        it('should delete a paciente', async () => {
+            (pacienteService.deletePaciente as jest.Mock).mockResolvedValue(undefined);
+
+            const response = await request(app).delete('/api/pacientes/1');
+            
+            expect(response.status).toBe(200); // Código de estado 200 para eliminación exitosa
+            expect(response.body).toEqual({ message: 'Paciente eliminado correctamente' });
+        });
+
+        it('should return error when deleting a paciente fails', async () => {
+            (pacienteService.deletePaciente as jest.Mock).mockRejectedValue(new Error('Error al eliminar el paciente'));
+
+            const response = await request(app).delete('/api/pacientes/1');
+            
+            expect(response.status).toBe(400); // Código de estado 400 para error en la eliminación
+            expect(response.body).toEqual({ message: 'Error al eliminar el pacienteError: Error al eliminar el paciente' });
+        });
+    }); 
 
 });
